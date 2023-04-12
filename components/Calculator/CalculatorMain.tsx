@@ -19,7 +19,7 @@ function InformationBlock({ value }: { value: number | null }) {
       })}
       >
         <Flex gap={16}>
-          <IconInfoCircle size="1.5rem" />
+          <IconInfoCircle size="1.5rem" className="shrink-0" />
           {value < 80 ? (
             <Text>
               A lower LTV ratio is usually viewed as less risky by lenders,
