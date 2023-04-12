@@ -5,5 +5,3 @@ export const LOAN_TO_VALUE = ({ depositValue, purchasePrice }: LoanToValue) => `
       result
     }
   }`;
-
-export const OTHERS = '';

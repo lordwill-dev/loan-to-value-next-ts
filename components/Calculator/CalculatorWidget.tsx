@@ -1,12 +1,18 @@
-import calculatorRequest from '@/utils/graphql';
+import { calculatorRequest } from '@/utils/graphql';
+import { calculatePercentageValue } from '@/utils/helpers';
 import { LOAN_TO_VALUE } from '@/utils/queries';
 import {
-  Box, TextInput, createStyles, Text, Alert, Button,
+  Box, TextInput, createStyles, Text, Alert, Button, Slider, Flex, Popover, Group, Stack,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconX } from '@tabler/icons-react';
+import { IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, { useState } from 'react';
+
+type Value = {
+  toSpend: number;
+  downPayment: number
+}
 
 const inputStyles = createStyles((theme) => ({
   label: {
@@ -15,14 +21,15 @@ const inputStyles = createStyles((theme) => ({
   },
 }));
 
-type Value = {
-  toSpend: number;
-  downPayment: number
-}
+const SLIDER_MARKS = [
+  { value: 0, label: '0%' },
+  { value: 25, label: '25%' },
+  { value: 50, label: '50%' },
+  { value: 75, label: '75%' },
+  { value: 100, label: '100%' },
+];
 
 export default function CalculatorWidget() {
-  // const [toSpend, setToSpend] = useState<number>(10000);
-  // const [down, setDown] = useState<number>(1500);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [ltvResult, setLtvResult] = useState<string>('');
@@ -32,7 +39,7 @@ export default function CalculatorWidget() {
   const form = useForm({
     initialValues: {
       toSpend: 25_000,
-      downPayment: 0,
+      downPayment: calculatePercentageValue({ baseValue: 25_000, percent: 50 }),
     },
   });
 
@@ -48,6 +55,15 @@ export default function CalculatorWidget() {
       icon: <IconX />,
       color: 'red',
     });
+  };
+
+  const handleSliderChange = (value: number) => {
+    const { toSpend } = form.values;
+
+    const percentAmount = calculatePercentageValue({ baseValue: toSpend, percent: value });
+
+    console.log(percentAmount);
+    form.setFieldValue('downPayment', percentAmount);
   };
 
   async function handleSubmit({ toSpend, downPayment }: Value) {
@@ -108,17 +124,59 @@ export default function CalculatorWidget() {
             {...form.getInputProps('toSpend')}
           />
 
-          <TextInput
-            label="Down payment amount"
-            type="number"
-            placeholder="How large a down payment can you afford"
-            size="md"
-            classNames={{
-              label: classes.label,
+          <Text sx={(theme) => ({
+            color: theme.fn.rgba(theme.colors.violet[1], 0.9),
+          })}
+          >
+            Downpayment amount
+
+            <Text fz="xs" className="flex items-center ">
+              <IconInfoCircle size="1.1rem" className="mr-1" />
+              How large a down payment can you afford
+            </Text>
+          </Text>
+
+          <Slider
+            color="dark"
+            defaultValue={50}
+            label={(val) => {
+              const mark = SLIDER_MARKS.find((mark) => mark.value === val);
+              return mark ? mark.label : '';
             }}
+            classNames={{
+              markLabel: classes.label,
+            }}
+            step={25}
+            marks={SLIDER_MARKS}
             disabled={isLoading || hasError}
-            {...form.getInputProps('downPayment')}
+            onChange={(value) => handleSliderChange(value)}
           />
+
+          <Stack spacing={0} className="!mt-12">
+            <Text
+              fz="xs"
+              sx={(theme) => ({
+                color: theme.fn.rgba(theme.colors.violet[1], 0.9),
+              })}
+              align="center"
+              className="mb-6"
+            >
+              or manually enter
+
+            </Text>
+
+            <TextInput
+              label=""
+              type="number"
+              placeholder="How large a down payment can you afford"
+              size="md"
+              classNames={{
+                label: classes.label,
+              }}
+              disabled={isLoading || hasError}
+              {...form.getInputProps('downPayment')}
+            />
+          </Stack>
 
           <Text
             fz="xl"
