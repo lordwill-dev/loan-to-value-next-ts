@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { calculatorRequest } from '@/utils/graphql';
 import { calculatePercentageValue } from '@/utils/helpers';
 import { LOAN_TO_VALUE } from '@/utils/queries';
@@ -7,11 +8,14 @@ import {
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconInfoCircle, IconX } from '@tabler/icons-react';
-import React, { useState } from 'react';
 
 type Value = {
   toSpend: number;
   downPayment: number
+}
+
+type Props = {
+  showInfo: (newState: number) => void;
 }
 
 const inputStyles = createStyles((theme) => ({
@@ -29,7 +33,7 @@ const SLIDER_MARKS = [
   { value: 100, label: '100%' },
 ];
 
-export default function CalculatorWidget() {
+export default function ChildComponent({ showInfo }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [ltvResult, setLtvResult] = useState<string>('');
@@ -62,7 +66,6 @@ export default function CalculatorWidget() {
 
     const percentAmount = calculatePercentageValue({ baseValue: toSpend, percent: value });
 
-    console.log(percentAmount);
     form.setFieldValue('downPayment', percentAmount);
   };
 
@@ -79,6 +82,10 @@ export default function CalculatorWidget() {
 
       if (data) {
         setLtvResult(data.loanToValueCalc?.result);
+
+        const removedPercent = data.loanToValueCalc?.result?.split('%')[0] || null;
+
+        showInfo(removedPercent);
         setHasError(false);
       } else {
         handleError();
