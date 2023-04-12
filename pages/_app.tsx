@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Poppins } from 'next/font/google';
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 
 const poppins = Poppins(
   {
@@ -25,8 +26,14 @@ export default function App({ Component, pageProps }: AppProps) {
         theme={{
           colorScheme: 'light',
           fontFamily: poppins.style.fontFamily,
+          globalStyles: (theme) => ({
+            body: {
+              backgroundColor: theme.fn.rgba(theme.colors.violet[0], 0.4),
+            },
+          }),
         }}
       >
+        <Notifications position="top-right" />
         <Component {...pageProps} />
       </MantineProvider>
     </>
