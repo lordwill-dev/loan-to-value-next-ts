@@ -53,7 +53,7 @@ export default function CalculatorMain() {
           width: '100%',
         })}
       >
-        <Text fz="xl" fw="500" component="h2">Calculator</Text>
+        <Text fz="xl" fw="500" component="h2">Loan-to-Value Calculator</Text>
 
         <Grid gutterLg="xl" gutterMd="sm">
           <Grid.Col md={6}>

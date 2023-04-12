@@ -3,7 +3,7 @@ import { calculatorRequest } from '@/utils/graphql';
 import { calculatePercentageValue } from '@/utils/helpers';
 import { LOAN_TO_VALUE } from '@/utils/queries';
 import {
-  Box, TextInput, createStyles, Text, Alert, Button, Slider, Flex, Popover, Group, Stack,
+  Box, TextInput, createStyles, Text, Button, Slider, Stack,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -15,7 +15,7 @@ type Value = {
 }
 
 type Props = {
-  showInfo: (newState: number) => void;
+  showInfo: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const inputStyles = createStyles((theme) => ({
@@ -147,7 +147,7 @@ export default function ChildComponent({ showInfo }: Props) {
             color="dark"
             defaultValue={50}
             label={(val) => {
-              const mark = SLIDER_MARKS.find((mark) => mark.value === val);
+              const mark = SLIDER_MARKS.find((slider) => slider.value === val);
               return mark ? mark.label : '';
             }}
             classNames={{
@@ -212,7 +212,6 @@ export default function ChildComponent({ showInfo }: Props) {
 
       </Box>
 
-      {/* <Alert icon={<IconAlertCircle size="1rem" />} title="What this means for you?" color="lime">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dignissimos fuga quasi obcaecati facere illum est, repellendus eos placeat deserunt animi natus, sequi delectus, nostrum iste totam quae culpa. Dolorem.</Alert> */}
     </div>
 
   );
